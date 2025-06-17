@@ -9,14 +9,9 @@ import { Image } from 'astro:assets';
 
 const posts = (await getCollection('blog'))
 
-//console.log(posts)
-//console.log(posts.map((post) => (post.data.properties)));
-
 const slugText = posts.map((post)=>(post.data.properties.slug.formula?.type==='string'
 	? post.data.properties.slug.formula.string
 	:null));
-
-console.log(slugText);
 
 const coverUrl = posts.map((post)=>(post.data.cover?.type === 'file'
 		? post.data.cover.file.url
