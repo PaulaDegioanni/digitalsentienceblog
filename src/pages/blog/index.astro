@@ -2,126 +2,86 @@
 import BaseHead from '../../components/BaseHead.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
+import avatar from '../../assets/avatar.png'; // Asegurate de poner tu foto en src/assets y usar el nombre correcto
 import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
 import { getCollection } from 'astro:content';
-import FormattedDate from '../../components/FormattedDate.astro';
 import { Image } from 'astro:assets';
 
-const posts = (await getCollection('blog'))
+const posts = await getCollection('blog');
 
-//console.log(posts)
-//console.log(posts.map((post) => (post.data.properties)));
+const slugText = posts.map((post) => (
+  post.data.properties.slug.formula?.type === 'string'
+    ? post.data.properties.slug.formula.string
+    : null
+));
 
-const slugText = posts.map((post)=>(post.data.properties.slug.formula?.type==='string'
-	? post.data.properties.slug.formula.string
-	:null));
-
-console.log(slugText);
-
-const coverUrl = posts.map((post)=>(post.data.cover?.type === 'file'
-		? post.data.cover.file.url
-		: post.data.cover?.type === 'external'
-		? post.data.cover.external.url
-		: null
-	))
-
-	
+const coverUrl = posts.map((post) => (
+  post.data.cover?.type === 'file'
+    ? post.data.cover.file.url
+    : post.data.cover?.type === 'external'
+    ? post.data.cover.external.url
+    : null
+));
 ---
 
 <!doctype html>
 <html lang="en">
-	<head>
-		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
-		<style>
-			main {
-				width: 960px;
-			}
-			ul {
-				display: flex;
-				flex-wrap: wrap;
-				gap: 2rem;
-				list-style-type: none;
-				margin: 0;
-				padding: 0;
-			}
-			ul li {
-				width: calc(50% - 1rem);
-			}
-			ul li * {
-				text-decoration: none;
-				transition: 0.2s ease;
-			}
-			ul li:first-child {
-				width: 100%;
-				margin-bottom: 1rem;
-				text-align: center;
-			}
-			ul li:first-child img {
-				width: 100%;
-			}
-			ul li:first-child .title {
-				font-size: 2.369rem;
-			}
-			ul li img {
-				margin-bottom: 0.5rem;
-				border-radius: 12px;
-			}
-			ul li a {
-				display: block;
-			}
-			.title {
-				margin: 0;
-				color: rgb(var(--black));
-				line-height: 1;
-			}
-			.date {
-				margin: 0;
-				color: rgb(var(--gray));
-			}
-			ul li a:hover h4,
-			ul li a:hover .date {
-				color: rgb(var(--accent));
-			}
-			ul a:hover img {
-				box-shadow: var(--box-shadow);
-			}
-			@media (max-width: 720px) {
-				ul {
-					gap: 0.5em;
-				}
-				ul li {
-					width: 100%;
-					text-align: center;
-				}
-				ul li:first-child {
-					margin-bottom: 0;
-				}
-				ul li:first-child .title {
-					font-size: 1.563em;
-				}
-			}
-		</style>
-	</head>
-	<body>
-		<Header />
-		<main>
-			<section>
-				<ul>
-					{
-						posts.map((post, index) => (
-							<li>
-								<a href={`/blog/${slugText[index]}/`}>
-									{post.data.cover && (
-										<img width={720} height={360} src={coverUrl[index]} alt="" />
-									)}
-									<h4 class="title">{post.data.properties.Name.title[0].plain_text}</h4>
-								</a>
-							</li>
-						))
-					}
-				</ul>
-			</section>
-		</main>
-		<Footer />
-	</body>
+  <head>
+    <BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+  </head>
+  <body class="bg-neutral-50 text-neutral-900 font-sans">
+    <Header />
+    <main class="mx-auto max-w-4xl px-4 py-12">
+	  	<section class="bg-gradient-to-b from-teal-800 to-teal-600 text-white py-20 px-4">
+			<div class="max-w-4xl mx-auto flex flex-col md:flex-row items-center gap-8">
+				<!-- Foto -->
+				<div class="w-32 h-32 md:w-48 md:h-48 rounded-full overflow-hidden shadow-lg border-4 border-white">
+				<img src={avatar.src} alt="Photo of Paula" class="object-cover w-full h-full" />
+				</div>
+
+				<!-- Texto de bienvenida -->
+				<div class="text-center md:text-left">
+				<h1 class="text-4xl md:text-5xl font-serif mb-4">Welcome to Zero One Zen</h1>
+				<p class="text-lg font-light leading-relaxed max-w-xl">
+					A slow-paced space for reflection, personal transformation, and curious thinking across disciplines — from
+					technology to the soul.
+				</p>
+				<p class="mt-4 text-sm font-medium tracking-wide uppercase">Written by Paula ✦</p>
+				</div>
+			</div>
+		</section>		
+		<section class="mb-12 text-center">
+			<h1 class="text-4xl md:text-5xl font-serif text-blue-950 mb-4">Zero One Zen</h1>
+			<p class="text-lg md:text-xl text-neutral-700 font-sans">
+			Un espacio íntimo de reflexión y exploración sobre lo invisible, lo cotidiano y lo esencial.
+			</p>
+			<p class="mt-2 text-sm text-neutral-500">Por Paula ✺</p>
+		</section>
+
+      <section>
+        <ul class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {
+            posts.map((post, index) => (
+              <li>
+                <a href={`/blog/${slugText[index]}/`} class="block group">
+                  {post.data.cover && (
+                    <img
+                      src={coverUrl[index]}
+                      alt=""
+                      class="w-full h-auto rounded-2xl mb-3 transition-shadow duration-300 group-hover:shadow-lg"
+                    />
+                  )}
+                  <h4 class="text-xl md:text-2xl font-serif text-blue-950 group-hover:text-sky-600">
+                    {post.data.properties.Name.title[0].plain_text}
+                  </h4>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </section>
+    </main>
+    <Footer />
+  </body>
 </html>
